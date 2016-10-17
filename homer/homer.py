@@ -72,32 +72,37 @@ precio_soup   = soup.find_all("div", class_="aditem-price")
 # Saca el actual text
 time = []
 for tag in time_soup:
-    time.append(tag.contents)
+    time.append(tag.contents[0])
 
-ref = []
+refs = []
 for tag in ref_soup:
-    ref.append(tag.contents)
+    refs.append(tag.contents[0].strip())
 
-titulo = []
+titulos = []
 for tag in title_soup:
-    titulo.append(tag.contents[0])
+    titulos.append(tag.contents[0].lower())
 
-cuerpo = []
+cuerpos = []
 for tag in cuerpo_soup:
-    cuerpo.append(tag.contents[0])
+    cuerpos.append(tag.contents[0])
 
-precio = []
+precios = []
 for tag in precio_soup:
-    precio.append(tag.contents[0])
+    precios.append(tag.contents[0])
+# convert to int
+precios = [int(('').join((p.split('.')))) for p in precios]
 
 # do some quick fixes to data
-# set data properly
-for t,p in izip(titulo,precio):
-   print t,p
 
+# create pandas dataframe
+table = [('Referencia',refs),('Descripcion',titulos),('Aparecido/Modificado',time),('Precio',precios)]
+df = pd.DataFrame.from_items(table)
 
-# Append titulo and list
-property_dict = {k: v for k, v in izip(titulo, precio)}
+#df.sort_values(['Precio'], ascending=[True])
+# this way we do not need to assign to a new df
+#df.sort_values(['Precio'], ascending=[True],inplace=True)
 
+# Quitar barrios
+exclude = ['benimamet','torrefiel','ruzafa','rusafa']
       
 
