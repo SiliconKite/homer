@@ -13,9 +13,11 @@ from itertools import izip
 import subprocess
 import argparse
 from datetime import datetime
+import urllib2
 
-url = 'www.milanuncios.com/venta-de-apartamentos-en-valencia-valencia/?desde=10000&hasta=100000&demanda=n&vendedor=part'
-url = 'www.milanuncios.com/venta-de-apartamentos-en-valencia-valencia/?desde={}&hasta={}&demanda=n&vendedor=part'
+
+
+url = 'http://www.milanuncios.com/venta-de-apartamentos-en-valencia-valencia/?desde={}&hasta={}&demanda=n&vendedor=part'
 cwd = os.getcwd()
 
 args = sys.argv[1:]
@@ -36,19 +38,34 @@ if ( results.last ):
     #output = head.communicate()[0]
     #ls.wait()
     newest = max(glob.iglob('*.html'), key=os.path.getctime)
-    FILENAME = cwd + '/' + newest
+    FILENAME = os.path.join(cwd,newest)
     print 'Using latest downloaded file : {}\n'.format(FILENAME)
 elif (results.file):
     # TODO: check file exists ...
-    FILENAME = cwd + '/' + results.file
-
-else:
+    FILENAME = os.path.join(cwd,results.file)
+    """
+    else:
     # download site
     url = url.format(results.min,results.max)
     FILENAME = 'wget_url_min={}_max={}_{}.html'.format(results.min,results.max,datetime.now().strftime('%d-%m-%Y_%Hh%Mm%Ss'))
     FILENAME = cwd + '/' + FILENAME
     cmd = ['wget','--output-document={0}'.format(FILENAME),url]
     subprocess.call(cmd)
+    """
+
+else:
+    #Query the website and return the html to the variable 'page' 
+    url = url.format(results.min,results.max)
+    FILENAME = 'url_{}.html'.format(datetime.now().strftime('%d-%m-%Y_%Hh%Mm%Ss'))
+    FILENAME = os.path.join(cwd,FILENAME)
+    response = urllib2.urlopen(url)
+    html = response.read()
+    #html2 = response.text()
+    fpointer = open(FILENAME,'w')
+    fpointer.write(html)
+    fpointer.close()
+
+
 
 html_path = FILENAME
 soup = BeautifulSoup(open(html_path),'html.parser')
