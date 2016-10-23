@@ -15,6 +15,10 @@ import argparse
 from datetime import datetime
 import urllib2
 
+# this is to improve displaying of dataframe in ipython
+pd.set_option('display.max_rows', 500)
+pd.set_option('display.max_columns', 500)
+pd.set_option('display.width', 1000)
 
 
 url = 'http://www.milanuncios.com/venta-de-apartamentos-en-valencia-valencia/?desde={}&hasta={}&demanda=n&vendedor=part'
@@ -120,6 +124,8 @@ df = pd.DataFrame.from_items(table)
 #df.sort_values(['Precio'], ascending=[True],inplace=True)
 
 # Quitar barrios
-exclude = ['benimamet','torrefiel','ruzafa','rusafa']
-      
+exclude = ['perello','zaidia','perellonet','benimamet','torrefiel','ruzafa','rusafa','russafa','monteolivete','fuensanta','san isidro','ayora','pechina','alacuas','benicalap']
+df = df[~df['Descripcion'].str.contains('|'.join(exclude))]
 
+# Quitar precios
+# exclude = 
